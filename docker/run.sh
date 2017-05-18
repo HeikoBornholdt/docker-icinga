@@ -1,9 +1,10 @@
 #!/bin/bash
 
+service postfix start
 service icinga start
 /usr/sbin/apache2ctl start
 
-tail -F /var/log/icinga/icinga.log /var/log/apache2/access.log /var/log/apache2/error.log & pid=$!
+tail -F /var/log/mail.log /var/log/mail.err /var/log/icinga/icinga.log /var/log/apache2/access.log /var/log/apache2/error.log & pid=$!
 echo "tail -F running in $pid"
 
 sleep 1

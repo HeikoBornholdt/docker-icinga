@@ -1,0 +1,26 @@
+#!/bin/bash
+# Dieser Nagios-Check fragt alle geblocketen IP-Adressen bei
+# https://postmaster.live.com/snds/index.aspx ab. Dazu müssen einmalig die
+# IP-Adressen dort hinterlegt werden. Andernfalls zeigt der Check hier immer OK
+# an. Es kann leider nicht unterschieden werden, ob die IP-Adresse noch nicht
+# hinzugefügt wurde oder nicht geblockt ist.
+# Damit das Skript hier laufen kann, muss der automatische Zugang auf die Daten
+# im Portal aktiviert werden und der Key unten eingetragen werden
+#
+# ./check_live_snds 123.123.123.123
+
+KEY=1df453fe-9292-f394-594e-168588888726
+IP=$1
+
+curl -s "https://postmaster.live.com/snds/ipStatus.aspx?key=${KEY}" | grep -q "^${IP},"
+IP_FOUND=$?
+
+if [ "$IP_FOUND" == "0" ]; then
+  echo "CRITICAL: IP $IP blocked"
+  exit 2
+
+else
+  echo "OK: IP $IP not blocked (or not found...)"
+  exit 0
+
+fi
